@@ -25,13 +25,15 @@
     </div>
     <nav class="sidebar-nav">
       <a href="#home" class="sidebar-item on">홈</a>
-      <a href="#works" class="sidebar-item" data-filter-type="all" data-filter-category="all">작업물 전체</a>
 
       <div class="sidebar-section">── 분류 ──</div>
-      <div id="sidebar-categories"></div>
+      <div id="sidebar-types" class="sidebar-group"></div>
 
-      <div class="sidebar-section">── 채널 ──</div>
-      <a id="sidebar-channel" href="https://www.youtube.com/@kojjilmung" target="_blank" rel="noopener" class="sidebar-item">📺 @kojjilmung</a>
+      <div class="sidebar-section">── 스트리머 별 분류 ──</div>
+      <div id="sidebar-streamers" class="sidebar-group"></div>
+
+      <div class="sidebar-section">── 개인 채널 및 링크 ──</div>
+      <div id="sidebar-links" class="sidebar-group"></div>
     </nav>
     <div class="sidebar-footer">
       <a href="#pricing" class="sidebar-cost">💰 비용 안내</a>
@@ -49,24 +51,27 @@
           <a href="#works" class="btn btn-blue">작업물 보기</a>
           <a id="hero-channel" href="https://www.youtube.com/@kojjilmung" target="_blank" rel="noopener" class="btn btn-mint">채널 방문</a>
         </div>
+        <div class="hero-career" id="hero-career"></div>
       </div>
       <div class="hero-deco" aria-hidden="true">🌕</div>
     </section>
 
     <section class="featured">
-      <div class="section-head">
-        <h2 class="section-title">대표 작업물</h2>
-        <div class="section-desc">최근 업로드된 대표 편집 영상입니다</div>
-      </div>
-      <div class="video-wrap">
-        <iframe
-          id="featured-iframe"
-          src="https://www.youtube.com/embed/MUbyQ7Q87ck"
-          title="만월의 대표 편집 영상"
-          loading="lazy"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          referrerpolicy="strict-origin-when-cross-origin"
-          allowfullscreen></iframe>
+      <div class="featured-inner">
+        <div class="section-head">
+          <h2 class="section-title">대표 작업물</h2>
+          <div class="section-desc">최근 업로드된 대표 편집 영상입니다</div>
+        </div>
+        <div class="video-wrap">
+          <iframe
+            id="featured-iframe"
+            src="https://www.youtube.com/embed/MUbyQ7Q87ck"
+            title="만월의 대표 편집 영상"
+            loading="lazy"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerpolicy="strict-origin-when-cross-origin"
+            allowfullscreen></iframe>
+        </div>
       </div>
     </section>
 
