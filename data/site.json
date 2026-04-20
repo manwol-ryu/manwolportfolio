@@ -21,10 +21,10 @@
       ]
     }
   },
-  "freeContent": "잘부탁드립니다. ",
+  "freeContent": "",
   "hero": {
     "eyebrow": "YOUTUBE EDITOR ✦",
-    "greeting": "잘부탁드립니다 👋",
+    "greeting": "잘 부탁드립니다 👋",
     "titleText": "영상 편집자 만월입니다",
     "titleAccent": "만월",
     "sub": "유튜브 편집 · 컷편집",
@@ -50,13 +50,13 @@
         "name": "After Effects",
         "emoji": "🎞",
         "enabled": true,
-        "level": 70
+        "level": 35
       },
       {
         "name": "Photoshop",
         "emoji": "🖼",
         "enabled": true,
-        "level": 70
+        "level": 35
       }
     ],
     "actions": [
@@ -82,7 +82,7 @@
     }
   },
   "featured": {
-    "id": "MUbyQ7Q87ck",
+    "id": "riFQfMFWda8",
     "title": "만월의 대표 편집 영상",
     "sectionTitle": "대표 작업물",
     "sectionDesc": "최근 업로드된 대표 편집 영상입니다"
@@ -99,6 +99,9 @@
   "categories": [
     {
       "name": "꼬질꼬질한 캔따개"
+    },
+    {
+      "name": "연습용"
     }
   ],
   "links": [
@@ -157,6 +160,13 @@
     }
   },
   "videos": [
+    {
+      "id": "MUbyQ7Q87ck",
+      "title": "연습용 포트폴리오",
+      "date": "2025-08-31",
+      "type": "long",
+      "category": "연습용"
+    },
     {
       "id": "WNIzEz3Xx20",
       "title": "끝까지 못보는 영상",
