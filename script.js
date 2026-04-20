@@ -57,11 +57,17 @@ function categoryByName(name) {
 function resolveHref(href) {
   if (!href) return '#';
   if (href === 'channel') return DATA.channel?.url || '#';
+  if (/^[\w.-]+\.[a-z]{2,}(\/|$)/i.test(href)) return `https://${href}`;
   return href;
 }
 function setText(id, v) {
   const el = document.getElementById(id);
   if (el && v != null) el.textContent = v;
+}
+function clampLevel(value) {
+  const number = Number(value);
+  if (!Number.isFinite(number)) return 70;
+  return Math.max(0, Math.min(100, Math.round(number)));
 }
 
 /* ── apply: site meta (title, description, sidebar chrome, footer) ── */
@@ -121,6 +127,30 @@ function renderHero() {
   }
 }
 
+/* ── render: hero contact ── */
+function renderContact() {
+  const el = document.getElementById('hero-contact');
+  if (!el) return;
+  const contact = DATA.hero?.contact || {};
+  const rows = [
+    contact.discord ? { label: '디스코드', value: contact.discord } : null,
+    contact.email ? { label: '이메일', value: contact.email } : null,
+  ].filter(Boolean);
+
+  if (!rows.length) { el.innerHTML = ''; return; }
+  el.innerHTML = `
+    <div class="contact-head">연락처</div>
+    <ul class="contact-list">
+      ${rows.map(row => `
+        <li class="contact-item">
+          <span class="contact-label">${escapeHTML(row.label)}</span>
+          <span class="contact-value">${escapeHTML(row.value)}</span>
+        </li>
+      `).join('')}
+    </ul>
+  `;
+}
+
 /* ── render: hero career list ── */
 function renderCareer() {
   const el = document.getElementById('hero-career');
@@ -145,19 +175,42 @@ function renderCareer() {
 function renderTools() {
   const el = document.getElementById('hero-tools');
   if (!el) return;
-  const items = DATA.hero?.tools || [];
+  const items = (DATA.hero?.tools || []).filter(tool => tool.enabled !== false);
   if (!items.length) { el.innerHTML = ''; return; }
   el.innerHTML = `
     <div class="tools-head">사용 툴</div>
     <ul class="tools-list">
-      ${items.map(t => `
-        <li class="tool-chip">
-          <span class="tool-emoji" aria-hidden="true">${escapeHTML(t.emoji || '🛠')}</span>
-          <span class="tool-name">${escapeHTML(t.name)}</span>
+      ${items.map(t => {
+        const level = clampLevel(t.level);
+        return `
+        <li class="tool-meter" style="--tool-level:${level}%">
+          <div class="tool-meter-head">
+            <span class="tool-name-wrap">
+              <span class="tool-emoji" aria-hidden="true">${escapeHTML(t.emoji || '🛠')}</span>
+              <span class="tool-name">${escapeHTML(t.name)}</span>
+            </span>
+          </div>
+          <span class="tool-bar" aria-hidden="true"><span></span></span>
         </li>
-      `).join('')}
+      `; }).join('')}
     </ul>
   `;
+}
+
+/* ── render: free content before footer ── */
+function renderFreeContent() {
+  const el = document.getElementById('free-content');
+  if (!el) return;
+  const content = String(DATA.freeContent || '').trim();
+
+  if (!content) {
+    el.hidden = true;
+    el.textContent = '';
+    return;
+  }
+
+  el.hidden = false;
+  el.textContent = content;
 }
 
 /* ── render: sidebar 분류 (전체/롱폼/숏폼) ── */
@@ -187,7 +240,6 @@ function renderSidebarStreamers() {
   el.innerHTML = DATA.categories.map(c => `
     <a href="#works" class="sidebar-item"
        data-filter-type="all" data-filter-category="${escapeHTML(c.name)}">
-      <span class="si-emoji" aria-hidden="true">${escapeHTML(c.emoji || '📁')}</span>
       <span class="si-label">${escapeHTML(c.name)}</span>
     </a>
   `).join('');
@@ -201,7 +253,7 @@ function renderSidebarLinks() {
     return;
   }
   el.innerHTML = DATA.links.map(l => `
-    <a href="${escapeHTML(l.url)}" target="_blank" rel="noopener" class="sidebar-item sidebar-link">
+    <a href="${escapeHTML(resolveHref(l.url))}" target="_blank" rel="noopener" class="sidebar-item sidebar-link">
       <span class="si-emoji" aria-hidden="true">${escapeHTML(l.emoji || '🔗')}</span>
       <span class="si-label">${escapeHTML(l.label)}</span>
       <span class="si-ext" aria-hidden="true">↗</span>
@@ -222,12 +274,12 @@ function renderGalleryFilters() {
   `).join('');
 
   const catBtns = [
-    { key: 'all', label: '전체 카테고리', emoji: '' },
-    ...DATA.categories.map(c => ({ key: c.name, label: c.name, emoji: c.emoji })),
+    { key: 'all', label: '전체 카테고리' },
+    ...DATA.categories.map(c => ({ key: c.name, label: c.name })),
   ].map(c => `
     <button class="filter-btn filter-cat ${state.category === c.key ? 'on' : ''}"
             data-filter-category="${escapeHTML(c.key)}">
-      ${c.emoji ? escapeHTML(c.emoji) + ' ' : ''}${escapeHTML(c.label)}
+      ${escapeHTML(c.label)}
     </button>
   `).join('');
 
@@ -259,7 +311,7 @@ function renderGalleryGrid() {
   el.innerHTML = filtered.map(v => {
     const cat = categoryByName(v.category);
     const metaParts = [];
-    if (cat) metaParts.push(`${cat.emoji} ${cat.name}`);
+    if (cat) metaParts.push(cat.name);
     metaParts.push(fmtDate(v.date));
 
     return `
@@ -285,13 +337,12 @@ function renderLog() {
   el.innerHTML = sorted.map(v => {
     const cat = categoryByName(v.category);
     const chLabel = cat ? cat.name : (DATA.channel?.handle || '');
-    const chEmoji = cat ? (cat.emoji || '📁') : '📺';
     return `
       <div class="log-row">
         <div class="log-date">${escapeHTML(fmtDate(v.date))}</div>
         <div class="log-line">
           <div class="log-body">
-            <div class="log-ch"><span class="log-ch-emoji" aria-hidden="true">${escapeHTML(chEmoji)}</span>${escapeHTML(chLabel)}</div>
+            <div class="log-ch">${escapeHTML(chLabel)}</div>
             <div class="log-name">
               <a href="${escapeHTML(videoHref(v))}" target="_blank" rel="noopener">${escapeHTML(v.title)}</a>
             </div>
@@ -384,7 +435,7 @@ function applySectionsAndFeatured() {
   setText('channel-icon', mw.icon || '📺');
   setText('channel-name', DATA.channel?.handle || '');
   const card = document.getElementById('channel-card');
-  if (card && DATA.channel?.url) card.href = DATA.channel.url;
+  if (card && DATA.channel?.url) card.href = resolveHref(DATA.channel.url);
 }
 
 /* ── filter wiring (delegated) ── */
@@ -456,6 +507,7 @@ async function boot() {
 
   applySite();
   renderHero();
+  renderContact();
   renderCareer();
   renderTools();
   applySectionsAndFeatured();
@@ -466,6 +518,7 @@ async function boot() {
   renderGalleryGrid();
   renderLog();
   renderPricing();
+  renderFreeContent();
   wireScrollSpy();
 }
 boot();

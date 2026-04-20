@@ -1,7 +1,6 @@
 {
   "site": {
     "title": "만월의 포트폴리오",
-    "description": "유튜브 영상 편집가 만월의 포트폴리오 — 컷편집, 모션그래픽, 숏폼",
     "logo": "🌕 만월",
     "tag": "YOUTUBE EDITOR",
     "sections": {
@@ -19,6 +18,7 @@
       ]
     }
   },
+  "freeContent": "",
   "hero": {
     "eyebrow": "YOUTUBE EDITOR ✦",
     "greeting": "안녕하세요 👋",
@@ -26,15 +26,19 @@
     "titleAccent": "만월",
     "sub": "유튜브 콘텐츠 전문 · 컷편집 · 모션그래픽",
     "deco": "🌕",
+    "contact": {
+      "discord": "rurimiru.",
+      "email": "manwol1578@gmail.com"
+    },
     "career": [
       { "text": "스트리머 ooo님 채널 쇼츠 편집자", "period": "2025.05~" },
       { "text": "스트리머 oo님 채널 편집자", "period": "2025.11~" },
       { "text": "개인채널 (꼬질꼬질한 캔따개) 운영", "period": "2025.10~" }
     ],
     "tools": [
-      { "name": "Premiere Pro", "emoji": "🎬" },
-      { "name": "After Effects", "emoji": "🎞" },
-      { "name": "Photoshop", "emoji": "🖼" }
+      { "name": "Premiere Pro", "emoji": "🎬", "enabled": true, "level": 70 },
+      { "name": "After Effects", "emoji": "🎞", "enabled": true, "level": 70 },
+      { "name": "Photoshop", "emoji": "🖼", "enabled": true, "level": 70 }
     ],
     "actions": [
       { "label": "작업물 보기", "href": "#works", "style": "blue" },
@@ -66,7 +70,7 @@
     "sectionDesc": "최근 납품한 작업 타임라인 — 시간순 정렬"
   },
   "categories": [
-    { "name": "꼬질꼬질한 캔따개", "emoji": "🥫" }
+    { "name": "꼬질꼬질한 캔따개" }
   ],
   "links": [
     { "label": "@kojjilmung", "url": "https://www.youtube.com/@kojjilmung", "emoji": "📺" }

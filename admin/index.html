@@ -3,46 +3,263 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>관리자 페이지 | JSON 편집</title>
+  <title>관리자 페이지 | 시각 편집</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="admin.css">
 </head>
 <body>
-  <div class="admin-shell">
-    <header class="admin-header">
-      <div>
-        <p class="admin-badge">관리자 페이지</p>
-        <h1>site.json 시각 편집기</h1>
-        <p class="admin-intro">
-          이 페이지는 <code>data/site.json</code>을 읽고, JSON을 미리 보고 수정한 뒤 파일로 내려받을 수 있습니다.
-          GitHub Pages 같은 정적 호스팅 환경에서는 자동 저장/커밋이 불가능하므로 변경 사항은 로컬에서 직접 저장 후 푸시해야 합니다.
-        </p>
+  <div class="admin-layout">
+    <aside class="admin-sidebar" aria-label="편집 메뉴">
+      <div class="sidebar-brand">
+        <span class="sidebar-kicker">MANWOL ADMIN</span>
+        <strong>site.json</strong>
+        <p>콘텐츠를 확인하고 정리한 뒤 JSON으로 복사하세요.</p>
       </div>
-      <div class="admin-warning">
-        <strong>보안 주의</strong>
-        <p>공개 저장소에 배포된 정적 페이지는 누구나 접근할 수 있습니다. 실제 관리자 인증이 필요하다면 서버 기반 인증/권한 관리가 필요합니다.</p>
+
+      <nav class="admin-tabs" aria-label="편집 메뉴">
+        <button class="tab-button on" type="button" data-tab="videos" aria-current="page">영상 관리</button>
+        <button class="tab-button" type="button" data-tab="categories">사이드 바 관리</button>
+        <button class="tab-button" type="button" data-tab="details">기타 요소</button>
+        <button class="tab-button" type="button" data-tab="json">JSON 확인</button>
+      </nav>
+    </aside>
+
+    <div class="admin-shell">
+      <header class="admin-hero">
+        <div class="hero-copy">
+          <p class="admin-badge">관리자 페이지</p>
+          <h1>포트폴리오 관리자 페이지</h1>
+          <p class="admin-intro">
+            왼쪽 메뉴에서 수정할 영역을 선택하고 내용을 편집하세요. 완료 후 복사하기로 JSON을 복사해 data/site.json에 붙여넣으면 됩니다.
+          </p>
+        </div>
+      </header>
+
+      <section class="summary-grid" aria-label="콘텐츠 요약">
+        <article class="summary-card">
+          <span class="summary-label">전체 영상</span>
+          <strong id="stat-total">0</strong>
+        </article>
+        <article class="summary-card">
+          <span class="summary-label">카테고리</span>
+          <strong id="stat-categories">0</strong>
+        </article>
+        <article class="summary-card">
+          <span class="summary-label">롱폼</span>
+          <strong id="stat-long">0</strong>
+        </article>
+        <article class="summary-card">
+          <span class="summary-label">숏폼</span>
+          <strong id="stat-short">0</strong>
+        </article>
+        <article class="summary-card wide">
+          <span class="summary-label">마지막 업로드</span>
+          <strong id="stat-latest">-</strong>
+        </article>
+      </section>
+
+      <main>
+      <section class="tab-panel on" id="panel-videos" data-panel="videos">
+        <div class="panel-head">
+          <div>
+            <h2>영상 추가</h2>
+            <p>링크에서 영상 ID와 타입을 확인하고, 제목과 채널명은 직접 입력합니다.</p>
+          </div>
+        </div>
+
+        <form class="editor-card video-form" id="video-form">
+          <div class="form-grid">
+            <label class="field span-2" for="video-url">
+              <span>YouTube 링크</span>
+              <input id="video-url" type="text" placeholder="https://youtu.be/jswUdIb8aVM">
+            </label>
+            <div class="url-actions span-2">
+              <span id="video-url-hint">링크를 입력하면 작성칸이 열립니다.</span>
+            </div>
+            <div class="video-fields span-2" id="video-fields" hidden>
+              <label class="field" for="video-title">
+                <span>영상 제목</span>
+                <input id="video-title" type="text" placeholder="영상 제목">
+              </label>
+              <label class="field" for="video-date">
+                <span>업로드 날짜</span>
+                <input id="video-date" type="date">
+              </label>
+              <label class="field" for="video-category">
+                <span>채널 / 카테고리</span>
+                <select id="video-category"></select>
+              </label>
+              <label class="field" for="video-type">
+                <span>영상 타입</span>
+                <select id="video-type">
+                  <option value="long">롱폼</option>
+                  <option value="short">숏폼</option>
+                </select>
+              </label>
+              <label class="field span-2 new-category-field" id="new-category-field" for="new-category-name">
+                <span>새 카테고리 이름</span>
+                <input id="new-category-name" type="text" placeholder="처음 등록할 채널명">
+              </label>
+            </div>
+          </div>
+          <div class="form-footer" id="video-form-footer" hidden>
+            <div class="video-preview" id="new-video-preview" hidden></div>
+            <button class="primary-action" id="video-submit" type="submit" hidden>영상 추가</button>
+          </div>
+        </form>
+
+        <div class="panel-head compact">
+          <div>
+            <h2>등록된 영상</h2>
+            <p>카드에서 바로 수정하면 JSON 미리보기에 즉시 반영됩니다.</p>
+          </div>
+          <div class="list-tools">
+            <label class="field compact-field" for="video-search">
+              <span>검색</span>
+              <input id="video-search" type="search" placeholder="제목 또는 카테고리">
+            </label>
+            <label class="field compact-field" for="video-filter">
+              <span>타입</span>
+              <select id="video-filter">
+                <option value="all">전체</option>
+                <option value="long">롱폼</option>
+                <option value="short">숏폼</option>
+              </select>
+            </label>
+          </div>
+        </div>
+        <div class="video-grid" id="video-list"></div>
+      </section>
+
+      <section class="tab-panel" id="panel-categories" data-panel="categories">
+        <div class="panel-head">
+          <div>
+            <h2>사이드 바 관리</h2>
+            <p>메인 페이지 사이드바에 노출되는 카테고리와 링크를 정리합니다.</p>
+          </div>
+        </div>
+        <form class="editor-card inline-form" id="category-form">
+          <label class="field" for="category-name">
+            <span>카테고리 이름</span>
+            <input id="category-name" type="text" placeholder="채널명">
+          </label>
+          <button class="primary-action" type="submit">카테고리 추가</button>
+        </form>
+        <div class="category-list" id="category-list"></div>
+
+        <div class="sidebar-management-grid">
+          <section class="editor-card detail-section wide-card">
+            <h3>링크</h3>
+            <form class="inline-form small-gap" id="link-form">
+              <label class="field" for="link-label"><span>라벨</span><input id="link-label" type="text" placeholder="@handle"></label>
+              <label class="field" for="link-url"><span>URL</span><input id="link-url" type="text" placeholder="youtube.com/@handle"></label>
+              <label class="field emoji-field" for="link-emoji"><span>이모지</span><input id="link-emoji" type="text" maxlength="4" placeholder="🔗"></label>
+              <button type="submit">링크 추가</button>
+            </form>
+            <div class="simple-list" id="link-list"></div>
+          </section>
+        </div>
+      </section>
+
+      <section class="tab-panel" id="panel-details" data-panel="details">
+        <div class="panel-head">
+          <div>
+            <h2>기타 요소</h2>
+            <p>메인 페이지의 문구와 비용 안내를 정리합니다.</p>
+          </div>
+        </div>
+        <div class="details-grid">
+          <section class="editor-card detail-section">
+            <h3>사이트 / Hero</h3>
+            <div class="form-grid">
+              <label class="field" for="site-title"><span>사이트 제목</span><input id="site-title" type="text"></label>
+              <label class="field" for="site-logo"><span>로고</span><input id="site-logo" type="text"></label>
+              <label class="field" for="hero-eyebrow"><span>Eyebrow</span><input id="hero-eyebrow" type="text"></label>
+              <label class="field" for="hero-greeting"><span>인사말</span><input id="hero-greeting" type="text"></label>
+              <label class="field" for="hero-title"><span>Hero 제목</span><input id="hero-title" type="text"></label>
+              <label class="field" for="hero-accent"><span>강조 단어</span><input id="hero-accent" type="text"></label>
+              <label class="field span-2" for="hero-sub"><span>Hero 설명</span><input id="hero-sub" type="text"></label>
+            </div>
+          </section>
+
+          <section class="editor-card detail-section">
+            <h3>연락처</h3>
+            <div class="form-grid">
+              <label class="field" for="hero-discord"><span>디스코드 사용자명</span><input id="hero-discord" type="text" placeholder="rurimiru."></label>
+              <label class="field" for="hero-email"><span>이메일</span><input id="hero-email" type="email" placeholder="manwol1578@gmail.com"></label>
+            </div>
+          </section>
+
+          <section class="editor-card detail-section">
+            <div class="section-row-head">
+              <h3>경력</h3>
+              <button id="add-career" type="button">경력 추가</button>
+            </div>
+            <div class="managed-list" id="career-editor-list"></div>
+          </section>
+
+          <section class="editor-card detail-section">
+            <div class="section-row-head">
+              <h3>사용툴</h3>
+              <button id="add-tool" type="button">툴 추가</button>
+            </div>
+            <div class="managed-list" id="tool-editor-list"></div>
+          </section>
+
+          <section class="editor-card detail-section">
+            <h3>자유 작성 영역</h3>
+            <label class="field" for="free-content-input">
+              <span>본문</span>
+              <textarea id="free-content-input" rows="6" placeholder="footer 위에 표시할 내용을 자유롭게 작성하세요."></textarea>
+            </label>
+            <p class="field-note">내용이 없으면 메인 페이지에 표시되지 않습니다.</p>
+          </section>
+
+          <section class="editor-card detail-section">
+            <h3>대표 영상 / 채널</h3>
+            <div class="form-grid">
+              <label class="field" for="featured-url"><span>대표 영상 링크</span><input id="featured-url" type="text" placeholder="https://youtu.be/..."></label>
+              <label class="field" for="featured-title-input"><span>대표 영상 제목</span><input id="featured-title-input" type="text"></label>
+              <label class="field" for="channel-handle"><span>채널 핸들</span><input id="channel-handle" type="text"></label>
+              <label class="field" for="channel-url"><span>채널 URL</span><input id="channel-url" type="text"></label>
+            </div>
+          </section>
+
+          <section class="editor-card detail-section wide-card">
+            <h3>비용 안내</h3>
+            <div class="pricing-card-list" id="pricing-card-list"></div>
+            <div class="form-grid">
+              <label class="field span-2" for="pricing-title"><span>섹션 제목</span><input id="pricing-title" type="text"></label>
+              <label class="field span-2" for="pricing-notes"><span>추가 안내</span><textarea id="pricing-notes" rows="5" placeholder="한 줄에 하나씩 입력"></textarea></label>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <section class="tab-panel" id="panel-json" data-panel="json">
+        <div class="panel-head">
+          <div>
+            <h2>JSON 복사</h2>
+            <p>아래 내용을 복사해서 GitHub의 <code>data/site.json</code>에 붙여 넣으세요.</p>
+          </div>
+          <button class="primary-action" id="copy-json-panel" type="button">복사하기</button>
+        </div>
+        <textarea id="json-output" class="json-output" spellcheck="false" aria-label="완성된 JSON"></textarea>
+      </section>
+      </main>
+    </div>
+
+    <section class="floating-actions" aria-label="빠른 JSON 작업">
+      <div class="floating-extra-actions" id="floating-extra-actions">
+        <button id="reload-json" type="button">초기 JSON 다시 불러오기</button>
+        <button id="validate-json" type="button">JSON 유효성 확인</button>
       </div>
-    </header>
-
-    <section class="admin-actions">
-      <button id="load-json">JSON 불러오기</button>
-      <button id="validate-json">유효성 검사</button>
-      <button id="download-json">JSON 다운로드</button>
-      <button id="copy-json">클립보드 복사</button>
-    </section>
-
-    <section class="admin-editor">
-      <label for="json-editor">JSON 편집기</label>
-      <textarea id="json-editor" spellcheck="false" aria-label="JSON 편집기"></textarea>
-      <div id="editor-status" aria-live="polite"></div>
-    </section>
-
-    <section class="admin-notes">
-      <h2>사용 방법</h2>
-      <ul>
-        <li>먼저 <strong>JSON 불러오기</strong>를 눌러 현재 데이터를 로드합니다.</li>
-        <li>필요한 내용을 수정한 뒤 <strong>JSON 다운로드</strong>로 파일을 저장하세요.</li>
-        <li>변경된 파일은 로컬에서 다시 저장하거나 GitHub에서 직접 커밋해야 배포됩니다.</li>
-      </ul>
+      <button class="primary-action" id="copy-all-json" type="button">복사하기</button>
+      <button class="floating-toggle" id="floating-actions-toggle" type="button" aria-expanded="false" aria-controls="floating-extra-actions" aria-label="JSON 작업 더 보기">
+        <span aria-hidden="true">&gt;</span>
+      </button>
     </section>
   </div>
 
