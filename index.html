@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>만월의 포트폴리오</title>
-<meta name="description" content="유튜브 영상 편집가 만월의 포트폴리오 — 컷편집, 모션그래픽, 숏폼">
+<meta id="site-desc" name="description" content="">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
@@ -20,23 +20,23 @@
 <div class="layout">
   <aside class="sidebar" id="sidebar" aria-label="사이드 내비게이션">
     <div class="sidebar-head">
-      <div class="sidebar-logo">🌕 만월</div>
-      <div class="sidebar-tag">YOUTUBE EDITOR</div>
+      <div class="sidebar-logo" id="sidebar-logo"></div>
+      <div class="sidebar-tag" id="sidebar-tag"></div>
     </div>
     <nav class="sidebar-nav">
-      <a href="#home" class="sidebar-item on">홈</a>
+      <a href="#home" class="sidebar-item on" id="sidebar-home">홈</a>
 
-      <div class="sidebar-section">── 분류 ──</div>
+      <div class="sidebar-section" id="sidebar-section-types"></div>
       <div id="sidebar-types" class="sidebar-group"></div>
 
-      <div class="sidebar-section">── 스트리머 별 분류 ──</div>
+      <div class="sidebar-section" id="sidebar-section-streamers"></div>
       <div id="sidebar-streamers" class="sidebar-group"></div>
 
-      <div class="sidebar-section">── 개인 채널 및 링크 ──</div>
+      <div class="sidebar-section" id="sidebar-section-links"></div>
       <div id="sidebar-links" class="sidebar-group"></div>
     </nav>
     <div class="sidebar-footer">
-      <a href="#pricing" class="sidebar-cost">💰 비용 안내</a>
+      <a href="#pricing" class="sidebar-cost" id="sidebar-cost"></a>
     </div>
   </aside>
 
@@ -44,29 +44,31 @@
 
     <section id="home" class="hero">
       <div class="hero-text">
-        <div class="hero-eyebrow">YOUTUBE EDITOR ✦</div>
-        <h1 class="hero-title">안녕하세요 👋<br>영상 편집가 <span class="accent">만월</span>입니다</h1>
-        <p class="hero-sub">유튜브 콘텐츠 전문 · 컷편집 · 모션그래픽</p>
-        <div class="hero-actions">
-          <a href="#works" class="btn btn-blue">작업물 보기</a>
-          <a id="hero-channel" href="https://www.youtube.com/@kojjilmung" target="_blank" rel="noopener" class="btn btn-mint">채널 방문</a>
+        <div class="hero-eyebrow" id="hero-eyebrow"></div>
+        <h1 class="hero-title" id="hero-title"></h1>
+        <p class="hero-sub" id="hero-sub"></p>
+
+        <div class="hero-meta">
+          <div class="hero-career" id="hero-career"></div>
+          <div class="hero-tools" id="hero-tools"></div>
         </div>
-        <div class="hero-career" id="hero-career"></div>
+
+        <div class="hero-actions" id="hero-actions"></div>
       </div>
-      <div class="hero-deco" aria-hidden="true">🌕</div>
+      <div class="hero-deco" id="hero-deco" aria-hidden="true"></div>
     </section>
 
     <section class="featured">
       <div class="featured-inner">
         <div class="section-head">
-          <h2 class="section-title">대표 작업물</h2>
-          <div class="section-desc">최근 업로드된 대표 편집 영상입니다</div>
+          <h2 class="section-title" id="featured-title"></h2>
+          <div class="section-desc" id="featured-desc"></div>
         </div>
         <div class="video-wrap">
           <iframe
             id="featured-iframe"
-            src="https://www.youtube.com/embed/MUbyQ7Q87ck"
-            title="만월의 대표 편집 영상"
+            src=""
+            title=""
             loading="lazy"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
             referrerpolicy="strict-origin-when-cross-origin"
@@ -77,23 +79,23 @@
 
     <section id="works" class="gallery">
       <div class="section-head">
-        <h2 class="section-title">작업물 갤러리</h2>
-        <div class="section-desc">전체 작업물 — 타입과 카테고리로 필터링 가능</div>
+        <h2 class="section-title" id="gallery-title"></h2>
+        <div class="section-desc" id="gallery-desc"></div>
       </div>
       <div class="gallery-filters" id="gallery-filters" role="toolbar" aria-label="갤러리 필터"></div>
       <div class="gallery-grid" id="gallery-grid"></div>
-      <div class="gallery-empty" id="gallery-empty" hidden>해당 조건의 영상이 없습니다</div>
+      <div class="gallery-empty" id="gallery-empty" hidden></div>
     </section>
 
     <section class="more-works">
       <div class="section-head">
-        <h2 class="section-title">더 많은 작업물</h2>
+        <h2 class="section-title" id="moreworks-title"></h2>
       </div>
-      <a id="channel-card" href="https://www.youtube.com/@kojjilmung" target="_blank" rel="noopener" class="channel-card">
-        <div class="channel-icon">📺</div>
+      <a id="channel-card" href="#" target="_blank" rel="noopener" class="channel-card">
+        <div class="channel-icon" id="channel-icon">📺</div>
         <div class="channel-info">
-          <div class="channel-name">@kojjilmung</div>
-          <div class="channel-sub">유튜브 채널에서 전체 작업물 보기 →</div>
+          <div class="channel-name" id="channel-name"></div>
+          <div class="channel-sub" id="channel-sub"></div>
         </div>
         <div class="channel-arrow" aria-hidden="true">↗</div>
       </a>
@@ -101,60 +103,25 @@
 
     <section class="worklog">
       <div class="section-head">
-        <h2 class="section-title">작업 로그</h2>
-        <div class="section-desc">최근 납품한 작업 타임라인 — 시간순 정렬</div>
+        <h2 class="section-title" id="worklog-title"></h2>
+        <div class="section-desc" id="worklog-desc"></div>
       </div>
       <div class="log-list" id="log-list"></div>
     </section>
 
     <section id="pricing" class="pricing">
       <div class="section-head">
-        <h2 class="section-title">비용 안내</h2>
-        <div class="section-desc">* 영상 길이 / 복잡도에 따라 협의 가능</div>
+        <h2 class="section-title" id="pricing-title"></h2>
+        <div class="section-desc" id="pricing-desc"></div>
       </div>
-      <div class="price-grid">
-        <div class="price-card">
-          <div class="price-name">라이트</div>
-          <div class="price-amt">3만원~</div>
-          <ul class="price-list">
-            <li>5분 이하 컷편집</li>
-            <li>자막 포함</li>
-            <li>BGM 삽입</li>
-          </ul>
-          <a href="https://www.youtube.com/@kojjilmung" target="_blank" rel="noopener" class="price-btn">문의하기</a>
-        </div>
-        <div class="price-card featured">
-          <div class="price-badge">인기</div>
-          <div class="price-name">스탠다드 ⭐</div>
-          <div class="price-amt">7만원~</div>
-          <ul class="price-list">
-            <li>10분 이하</li>
-            <li>자막 + 모션</li>
-            <li>썸네일 포함</li>
-            <li>2회 수정</li>
-          </ul>
-          <a href="https://www.youtube.com/@kojjilmung" target="_blank" rel="noopener" class="price-btn">문의하기</a>
-        </div>
-        <div class="price-card">
-          <div class="price-name">프리미엄</div>
-          <div class="price-amt">15만원~</div>
-          <ul class="price-list">
-            <li>20분 이하</li>
-            <li>풀 모션그래픽</li>
-            <li>색보정 포함</li>
-            <li>3회 수정</li>
-          </ul>
-          <a href="https://www.youtube.com/@kojjilmung" target="_blank" rel="noopener" class="price-btn">문의하기</a>
-        </div>
-      </div>
+      <div class="price-grid" id="price-grid"></div>
+      <div class="price-notes" id="price-notes"></div>
     </section>
 
     <footer class="site-footer">
-      <div class="footer-logo">🌕 만월</div>
-      <div class="footer-links">
-        <a href="https://www.youtube.com/@kojjilmung" target="_blank" rel="noopener">YouTube</a>
-      </div>
-      <div class="footer-copy">© 2025 만월의 포트폴리오</div>
+      <div class="footer-logo" id="footer-logo"></div>
+      <div class="footer-links" id="footer-links"></div>
+      <div class="footer-copy" id="footer-copy"></div>
     </footer>
 
   </main>

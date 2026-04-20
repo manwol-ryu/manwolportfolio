@@ -1,5 +1,6 @@
 /* ──────────────────────────────────────────
    만월 포트폴리오 — data-driven renderer
+   (모든 콘텐츠는 data/site.json 으로 관리)
    ────────────────────────────────────────── */
 
 const toggle = document.getElementById('menu-toggle');
@@ -24,7 +25,7 @@ document.addEventListener('keydown', (e) => {
 /* ── filter state ── */
 const state = {
   type: 'all',       // 'all' | 'long' | 'short'
-  category: 'all',   // 'all' | categoryId
+  category: 'all',   // 'all' | category name
 };
 
 const TYPE_LABELS = { long: '롱폼', short: '숏폼' };
@@ -38,7 +39,7 @@ function fmtDate(iso) {
   return `${y}. ${m}. ${d}`;
 }
 function escapeHTML(str) {
-  return String(str).replace(/[&<>"']/g, c => ({
+  return String(str ?? '').replace(/[&<>"']/g, c => ({
     '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
   }[c]));
 }
@@ -50,11 +51,116 @@ function videoHref(v) {
 function videoThumb(id) {
   return `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
 }
-function categoryById(id) {
-  return DATA.categories.find(c => c.id === id);
+function categoryByName(name) {
+  return DATA.categories?.find(c => c.name === name) || null;
+}
+function resolveHref(href) {
+  if (!href) return '#';
+  if (href === 'channel') return DATA.channel?.url || '#';
+  return href;
+}
+function setText(id, v) {
+  const el = document.getElementById(id);
+  if (el && v != null) el.textContent = v;
 }
 
-/* ── render: sidebar 분류 (전체/롱폼/숏폼 — type filter, category:all) ── */
+/* ── apply: site meta (title, description, sidebar chrome, footer) ── */
+function applySite() {
+  const s = DATA.site || {};
+  if (s.title) document.title = s.title;
+  const desc = document.getElementById('site-desc');
+  if (desc && s.description) desc.setAttribute('content', s.description);
+
+  setText('sidebar-logo', s.logo);
+  setText('sidebar-tag', s.tag);
+  setText('sidebar-home', s.homeLabel || '홈');
+  setText('sidebar-cost', s.costLabel || '💰 비용 안내');
+
+  const sect = s.sections || {};
+  setText('sidebar-section-types', sect.types || '── 분류 ──');
+  setText('sidebar-section-streamers', sect.streamers || '── 스트리머 별 분류 ──');
+  setText('sidebar-section-links', sect.links || '── 개인 채널 및 링크 ──');
+
+  const f = s.footer || {};
+  setText('footer-logo', f.logo);
+  setText('footer-copy', f.copy);
+  const fl = document.getElementById('footer-links');
+  if (fl) {
+    fl.innerHTML = (f.links || []).map(l => `
+      <a href="${escapeHTML(resolveHref(l.url))}" target="_blank" rel="noopener">${escapeHTML(l.label)}</a>
+    `).join('');
+  }
+}
+
+/* ── render: hero (eyebrow, title with accent, sub, deco, actions) ── */
+function renderHero() {
+  const h = DATA.hero || {};
+  setText('hero-eyebrow', h.eyebrow);
+  setText('hero-sub', h.sub);
+  setText('hero-deco', h.deco);
+
+  const titleEl = document.getElementById('hero-title');
+  if (titleEl) {
+    const greet = escapeHTML(h.greeting || '');
+    const text  = escapeHTML(h.titleText || '');
+    const acc   = escapeHTML(h.titleAccent || '');
+    const withAcc = acc
+      ? text.replace(acc, `<span class="accent">${acc}</span>`)
+      : text;
+    titleEl.innerHTML = [greet, withAcc].filter(Boolean).join('<br>');
+  }
+
+  const ac = document.getElementById('hero-actions');
+  if (ac) {
+    ac.innerHTML = (h.actions || []).map(a => {
+      const href = resolveHref(a.href);
+      const external = /^https?:/i.test(href) ? ' target="_blank" rel="noopener"' : '';
+      const cls = a.style === 'mint' ? 'btn-mint' : 'btn-blue';
+      return `<a href="${escapeHTML(href)}" class="btn ${cls}"${external}>${escapeHTML(a.label)}</a>`;
+    }).join('');
+  }
+}
+
+/* ── render: hero career list ── */
+function renderCareer() {
+  const el = document.getElementById('hero-career');
+  if (!el) return;
+  const items = DATA.hero?.career || [];
+  if (!items.length) { el.innerHTML = ''; return; }
+  el.innerHTML = `
+    <div class="career-head">경력</div>
+    <ul class="career-list">
+      ${items.map(c => `
+        <li class="career-item">
+          <span class="career-bullet" aria-hidden="true">✦</span>
+          <span class="career-text">${escapeHTML(c.text)}</span>
+          ${c.period ? `<span class="career-period">${escapeHTML(c.period)}</span>` : ''}
+        </li>
+      `).join('')}
+    </ul>
+  `;
+}
+
+/* ── render: hero tools chips ── */
+function renderTools() {
+  const el = document.getElementById('hero-tools');
+  if (!el) return;
+  const items = DATA.hero?.tools || [];
+  if (!items.length) { el.innerHTML = ''; return; }
+  el.innerHTML = `
+    <div class="tools-head">사용 툴</div>
+    <ul class="tools-list">
+      ${items.map(t => `
+        <li class="tool-chip">
+          <span class="tool-emoji" aria-hidden="true">${escapeHTML(t.emoji || '🛠')}</span>
+          <span class="tool-name">${escapeHTML(t.name)}</span>
+        </li>
+      `).join('')}
+    </ul>
+  `;
+}
+
+/* ── render: sidebar 분류 (전체/롱폼/숏폼) ── */
 function renderSidebarTypes() {
   const el = document.getElementById('sidebar-types');
   const items = [
@@ -71,7 +177,7 @@ function renderSidebarTypes() {
   `).join('');
 }
 
-/* ── render: sidebar 스트리머 별 분류 (sets type:all + category:id) ── */
+/* ── render: sidebar 스트리머 별 분류 ── */
 function renderSidebarStreamers() {
   const el = document.getElementById('sidebar-streamers');
   if (!DATA.categories?.length) {
@@ -80,14 +186,14 @@ function renderSidebarStreamers() {
   }
   el.innerHTML = DATA.categories.map(c => `
     <a href="#works" class="sidebar-item"
-       data-filter-type="all" data-filter-category="${escapeHTML(c.id)}">
+       data-filter-type="all" data-filter-category="${escapeHTML(c.name)}">
       <span class="si-emoji" aria-hidden="true">${escapeHTML(c.emoji || '📁')}</span>
       <span class="si-label">${escapeHTML(c.name)}</span>
     </a>
   `).join('');
 }
 
-/* ── render: sidebar 개인 채널 및 링크 (external links, new tab) ── */
+/* ── render: sidebar 개인 채널 및 링크 ── */
 function renderSidebarLinks() {
   const el = document.getElementById('sidebar-links');
   if (!DATA.links?.length) {
@@ -101,25 +207,6 @@ function renderSidebarLinks() {
       <span class="si-ext" aria-hidden="true">↗</span>
     </a>
   `).join('');
-}
-
-/* ── render: hero career list ── */
-function renderCareer() {
-  const el = document.getElementById('hero-career');
-  if (!el) return;
-  if (!DATA.career?.length) { el.innerHTML = ''; return; }
-  el.innerHTML = `
-    <div class="career-head">경력</div>
-    <ul class="career-list">
-      ${DATA.career.map(c => `
-        <li class="career-item">
-          <span class="career-bullet" aria-hidden="true">✦</span>
-          <span class="career-text">${escapeHTML(c.text)}</span>
-          ${c.period ? `<span class="career-period">${escapeHTML(c.period)}</span>` : ''}
-        </li>
-      `).join('')}
-    </ul>
-  `;
 }
 
 /* ── render: gallery filters ── */
@@ -136,7 +223,7 @@ function renderGalleryFilters() {
 
   const catBtns = [
     { key: 'all', label: '전체 카테고리', emoji: '' },
-    ...DATA.categories.map(c => ({ key: c.id, label: c.name, emoji: c.emoji })),
+    ...DATA.categories.map(c => ({ key: c.name, label: c.name, emoji: c.emoji })),
   ].map(c => `
     <button class="filter-btn filter-cat ${state.category === c.key ? 'on' : ''}"
             data-filter-category="${escapeHTML(c.key)}">
@@ -170,7 +257,7 @@ function renderGalleryGrid() {
   empty.hidden = true;
 
   el.innerHTML = filtered.map(v => {
-    const cat = categoryById(v.category);
+    const cat = categoryByName(v.category);
     const metaParts = [];
     if (cat) metaParts.push(`${cat.emoji} ${cat.name}`);
     metaParts.push(fmtDate(v.date));
@@ -190,13 +277,13 @@ function renderGalleryGrid() {
   }).join('');
 }
 
-/* ── render: work log (all videos, date desc) ── */
+/* ── render: work log ── */
 function renderLog() {
   const el = document.getElementById('log-list');
   const sorted = DATA.videos.slice().sort((a, b) => b.date.localeCompare(a.date));
 
   el.innerHTML = sorted.map(v => {
-    const cat = categoryById(v.category);
+    const cat = categoryByName(v.category);
     const chLabel = cat ? cat.name : (DATA.channel?.handle || '');
     const chEmoji = cat ? (cat.emoji || '📁') : '📺';
     return `
@@ -221,23 +308,83 @@ function renderLog() {
   }).join('');
 }
 
-/* ── apply channel/featured from data ── */
-function applyChannelAndFeatured() {
-  const url = DATA.channel?.url;
-  const handle = DATA.channel?.handle;
-  if (url) {
-    document.querySelectorAll('a[href="https://www.youtube.com/@kojjilmung"]').forEach(a => {
-      a.href = url;
-    });
-  }
-  const channelNameEl = document.querySelector('#channel-card .channel-name');
-  if (channelNameEl && handle) channelNameEl.textContent = handle;
+/* ── render: pricing (cards + notes) ── */
+function renderPricing() {
+  const p = DATA.pricing || {};
+  setText('pricing-title', p.sectionTitle);
+  setText('pricing-desc',  p.sectionDesc);
 
-  const iframe = document.getElementById('featured-iframe');
-  if (iframe && DATA.featured?.id) {
-    iframe.src = `https://www.youtube.com/embed/${DATA.featured.id}`;
-    if (DATA.featured.title) iframe.title = DATA.featured.title;
+  const grid = document.getElementById('price-grid');
+  if (grid) {
+    grid.innerHTML = (p.cards || []).map(card => `
+      <div class="price-card price-${escapeHTML(card.key || 'default')}">
+        <div class="price-head">
+          <span class="price-emoji" aria-hidden="true">${escapeHTML(card.emoji || '')}</span>
+          <span class="price-name">${escapeHTML(card.title || '')}</span>
+        </div>
+        <ul class="price-list">
+          ${(card.items || []).map(it => `
+            <li class="price-row">
+              <span class="price-label">${escapeHTML(it.label)}</span>
+              <span class="price-amt">${escapeHTML(it.price)}</span>
+            </li>
+          `).join('')}
+        </ul>
+        ${card.cta ? `
+          <a class="price-btn" href="${escapeHTML(resolveHref(card.cta.href))}"
+             ${/^https?:/i.test(resolveHref(card.cta.href)) ? 'target="_blank" rel="noopener"' : ''}>
+            ${escapeHTML(card.cta.label)}
+          </a>
+        ` : ''}
+      </div>
+    `).join('');
   }
+
+  const notes = document.getElementById('price-notes');
+  if (notes) {
+    if (!p.notes?.items?.length) { notes.innerHTML = ''; return; }
+    notes.innerHTML = `
+      <div class="notes-head">${escapeHTML(p.notes.title || '추가 안내')}</div>
+      <ul class="notes-list">
+        ${p.notes.items.map(n => `
+          <li class="notes-item">
+            <span class="notes-bullet" aria-hidden="true">•</span>
+            <span>${escapeHTML(n)}</span>
+          </li>
+        `).join('')}
+      </ul>
+    `;
+  }
+}
+
+/* ── apply: featured + channel card + section headings ── */
+function applySectionsAndFeatured() {
+  const f = DATA.featured || {};
+  setText('featured-title', f.sectionTitle || '대표 작업물');
+  setText('featured-desc',  f.sectionDesc  || '');
+  const iframe = document.getElementById('featured-iframe');
+  if (iframe && f.id) {
+    iframe.src = `https://www.youtube.com/embed/${f.id}`;
+    if (f.title) iframe.title = f.title;
+  }
+
+  const g = DATA.gallery || {};
+  setText('gallery-title', g.sectionTitle || '작업물 갤러리');
+  setText('gallery-desc',  g.sectionDesc  || '');
+  const emptyEl = document.getElementById('gallery-empty');
+  if (emptyEl) emptyEl.textContent = g.emptyText || '해당 조건의 영상이 없습니다';
+
+  const w = DATA.worklog || {};
+  setText('worklog-title', w.sectionTitle || '작업 로그');
+  setText('worklog-desc',  w.sectionDesc  || '');
+
+  const mw = DATA.channel?.moreWorks || {};
+  setText('moreworks-title', mw.title || '더 많은 작업물');
+  setText('channel-sub', mw.sub || '');
+  setText('channel-icon', mw.icon || '📺');
+  setText('channel-name', DATA.channel?.handle || '');
+  const card = document.getElementById('channel-card');
+  if (card && DATA.channel?.url) card.href = DATA.channel.url;
 }
 
 /* ── filter wiring (delegated) ── */
@@ -254,7 +401,6 @@ document.addEventListener('click', (e) => {
   const type = el.dataset.filterType;
   const cat  = el.dataset.filterCategory;
 
-  /* sidebar "작업물 전체" resets both */
   if (type === 'all' && cat === 'all') {
     setFilter('all', 'all');
   } else if (type !== undefined && cat !== undefined) {
@@ -275,7 +421,7 @@ sidebar.addEventListener('click', (e) => {
   if (window.matchMedia('(max-width: 820px)').matches) setOpen(false);
 });
 
-/* ── scroll spy (home/works/pricing) ── */
+/* ── scroll spy ── */
 function wireScrollSpy() {
   const navLinks = sidebar.querySelectorAll('.sidebar-nav > a[href^="#"]');
   const sections = [...navLinks]
@@ -298,24 +444,28 @@ function wireScrollSpy() {
 /* ── boot ── */
 async function boot() {
   try {
-    const res = await fetch('data/videos.json', { cache: 'no-cache' });
+    const res = await fetch('data/site.json', { cache: 'no-cache' });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     DATA = await res.json();
   } catch (err) {
-    console.error('videos.json load failed:', err);
+    console.error('site.json load failed:', err);
     document.getElementById('gallery-grid').innerHTML =
-      '<div class="gallery-empty" style="grid-column:1/-1;">데이터를 불러오지 못했습니다 (data/videos.json).</div>';
+      '<div class="gallery-empty" style="grid-column:1/-1;">데이터를 불러오지 못했습니다 (data/site.json).</div>';
     return;
   }
 
-  applyChannelAndFeatured();
+  applySite();
+  renderHero();
   renderCareer();
+  renderTools();
+  applySectionsAndFeatured();
   renderSidebarTypes();
   renderSidebarStreamers();
   renderSidebarLinks();
   renderGalleryFilters();
   renderGalleryGrid();
   renderLog();
+  renderPricing();
   wireScrollSpy();
 }
 boot();
