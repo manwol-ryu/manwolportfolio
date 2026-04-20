@@ -77,8 +77,8 @@ function applySite() {
   setText('sidebar-cost', s.costLabel || '💰 비용 안내');
 
   const sect = s.sections || {};
-  setText('sidebar-section-types', sect.types || '── 분류 ──');
-  setText('sidebar-section-streamers', sect.streamers || '── 스트리머 별 분류 ──');
+  setText('sidebar-section-types', sect.types || '── 영상 종류 ──');
+  setText('sidebar-section-streamers', sect.streamers || '── 스트리머 별 ──');
   setText('sidebar-section-links', sect.links || '── 개인 채널 및 링크 ──');
 
   const f = s.footer || {};
