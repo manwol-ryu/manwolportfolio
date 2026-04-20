@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>관리자 페이지 | JSON 편집</title>
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+  <div class="admin-shell">
+    <header class="admin-header">
+      <div>
+        <p class="admin-badge">관리자 페이지</p>
+        <h1>site.json 시각 편집기</h1>
+        <p class="admin-intro">
+          이 페이지는 <code>data/site.json</code>을 읽고, JSON을 미리 보고 수정한 뒤 파일로 내려받을 수 있습니다.
+          GitHub Pages 같은 정적 호스팅 환경에서는 자동 저장/커밋이 불가능하므로 변경 사항은 로컬에서 직접 저장 후 푸시해야 합니다.
+        </p>
+      </div>
+      <div class="admin-warning">
+        <strong>보안 주의</strong>
+        <p>공개 저장소에 배포된 정적 페이지는 누구나 접근할 수 있습니다. 실제 관리자 인증이 필요하다면 서버 기반 인증/권한 관리가 필요합니다.</p>
+      </div>
+    </header>
+
+    <section class="admin-actions">
+      <button id="load-json">JSON 불러오기</button>
+      <button id="validate-json">유효성 검사</button>
+      <button id="download-json">JSON 다운로드</button>
+      <button id="copy-json">클립보드 복사</button>
+    </section>
+
+    <section class="admin-editor">
+      <label for="json-editor">JSON 편집기</label>
+      <textarea id="json-editor" spellcheck="false" aria-label="JSON 편집기"></textarea>
+      <div id="editor-status" aria-live="polite"></div>
+    </section>
+
+    <section class="admin-notes">
+      <h2>사용 방법</h2>
+      <ul>
+        <li>먼저 <strong>JSON 불러오기</strong>를 눌러 현재 데이터를 로드합니다.</li>
+        <li>필요한 내용을 수정한 뒤 <strong>JSON 다운로드</strong>로 파일을 저장하세요.</li>
+        <li>변경된 파일은 로컬에서 다시 저장하거나 GitHub에서 직접 커밋해야 배포됩니다.</li>
+      </ul>
+    </section>
+  </div>
+
+  <script src="admin.js"></script>
+</body>
+</html>
