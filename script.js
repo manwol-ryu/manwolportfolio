@@ -54,20 +54,72 @@ function categoryById(id) {
   return DATA.categories.find(c => c.id === id);
 }
 
-/* ── render: sidebar categories (fixed 롱폼/숏폼 + dynamic) ── */
-function renderSidebarCategories() {
-  const el = document.getElementById('sidebar-categories');
+/* ── render: sidebar 분류 (전체/롱폼/숏폼 — type filter, category:all) ── */
+function renderSidebarTypes() {
+  const el = document.getElementById('sidebar-types');
   const items = [
-    { kind: 'type',     key: 'long',  emoji: TYPE_ICONS.long,  name: TYPE_LABELS.long  },
-    { kind: 'type',     key: 'short', emoji: TYPE_ICONS.short, name: TYPE_LABELS.short },
-    ...DATA.categories.map(c => ({ kind: 'category', key: c.id, emoji: c.emoji, name: c.name })),
+    { key: 'all',   emoji: '🎞', name: '전체' },
+    { key: 'long',  emoji: TYPE_ICONS.long,  name: TYPE_LABELS.long },
+    { key: 'short', emoji: TYPE_ICONS.short, name: TYPE_LABELS.short },
   ];
   el.innerHTML = items.map(it => `
     <a href="#works" class="sidebar-item"
-       data-filter-${it.kind}="${escapeHTML(it.key)}">
-      ${escapeHTML(it.emoji)} ${escapeHTML(it.name)}
+       data-filter-type="${escapeHTML(it.key)}" data-filter-category="all">
+      <span class="si-emoji" aria-hidden="true">${escapeHTML(it.emoji)}</span>
+      <span class="si-label">${escapeHTML(it.name)}</span>
     </a>
   `).join('');
+}
+
+/* ── render: sidebar 스트리머 별 분류 (sets type:all + category:id) ── */
+function renderSidebarStreamers() {
+  const el = document.getElementById('sidebar-streamers');
+  if (!DATA.categories?.length) {
+    el.innerHTML = '<div class="sidebar-empty">등록된 스트리머가 없습니다</div>';
+    return;
+  }
+  el.innerHTML = DATA.categories.map(c => `
+    <a href="#works" class="sidebar-item"
+       data-filter-type="all" data-filter-category="${escapeHTML(c.id)}">
+      <span class="si-emoji" aria-hidden="true">${escapeHTML(c.emoji || '📁')}</span>
+      <span class="si-label">${escapeHTML(c.name)}</span>
+    </a>
+  `).join('');
+}
+
+/* ── render: sidebar 개인 채널 및 링크 (external links, new tab) ── */
+function renderSidebarLinks() {
+  const el = document.getElementById('sidebar-links');
+  if (!DATA.links?.length) {
+    el.innerHTML = '<div class="sidebar-empty">등록된 링크가 없습니다</div>';
+    return;
+  }
+  el.innerHTML = DATA.links.map(l => `
+    <a href="${escapeHTML(l.url)}" target="_blank" rel="noopener" class="sidebar-item sidebar-link">
+      <span class="si-emoji" aria-hidden="true">${escapeHTML(l.emoji || '🔗')}</span>
+      <span class="si-label">${escapeHTML(l.label)}</span>
+      <span class="si-ext" aria-hidden="true">↗</span>
+    </a>
+  `).join('');
+}
+
+/* ── render: hero career list ── */
+function renderCareer() {
+  const el = document.getElementById('hero-career');
+  if (!el) return;
+  if (!DATA.career?.length) { el.innerHTML = ''; return; }
+  el.innerHTML = `
+    <div class="career-head">경력</div>
+    <ul class="career-list">
+      ${DATA.career.map(c => `
+        <li class="career-item">
+          <span class="career-bullet" aria-hidden="true">✦</span>
+          <span class="career-text">${escapeHTML(c.text)}</span>
+          ${c.period ? `<span class="career-period">${escapeHTML(c.period)}</span>` : ''}
+        </li>
+      `).join('')}
+    </ul>
+  `;
 }
 
 /* ── render: gallery filters ── */
@@ -145,17 +197,24 @@ function renderLog() {
 
   el.innerHTML = sorted.map(v => {
     const cat = categoryById(v.category);
+    const chLabel = cat ? cat.name : (DATA.channel?.handle || '');
+    const chEmoji = cat ? (cat.emoji || '📁') : '📺';
     return `
       <div class="log-row">
         <div class="log-date">${escapeHTML(fmtDate(v.date))}</div>
         <div class="log-line">
-          <div class="log-ch">${escapeHTML(DATA.channel.handle)}${cat ? ` · ${escapeHTML(cat.emoji)} ${escapeHTML(cat.name)}` : ''}</div>
-          <div class="log-name">
-            <a href="${escapeHTML(videoHref(v))}" target="_blank" rel="noopener">${escapeHTML(v.title)}</a>
+          <div class="log-body">
+            <div class="log-ch"><span class="log-ch-emoji" aria-hidden="true">${escapeHTML(chEmoji)}</span>${escapeHTML(chLabel)}</div>
+            <div class="log-name">
+              <a href="${escapeHTML(videoHref(v))}" target="_blank" rel="noopener">${escapeHTML(v.title)}</a>
+            </div>
+            <div class="log-tags">
+              <span class="type-badge type-${v.type}">${TYPE_LABELS[v.type] || ''}</span>
+            </div>
           </div>
-          <div class="log-tags">
-            <span class="type-badge type-${v.type}">${TYPE_LABELS[v.type] || ''}</span>
-          </div>
+          <a class="log-thumb" href="${escapeHTML(videoHref(v))}" target="_blank" rel="noopener" aria-label="${escapeHTML(v.title)}">
+            <img src="${videoThumb(v.id)}" alt="" loading="lazy" referrerpolicy="no-referrer">
+          </a>
         </div>
       </div>
     `;
@@ -171,8 +230,6 @@ function applyChannelAndFeatured() {
       a.href = url;
     });
   }
-  const sidebarChannel = document.getElementById('sidebar-channel');
-  if (sidebarChannel && handle) sidebarChannel.textContent = `📺 ${handle}`;
   const channelNameEl = document.querySelector('#channel-card .channel-name');
   if (channelNameEl && handle) channelNameEl.textContent = handle;
 
@@ -252,7 +309,10 @@ async function boot() {
   }
 
   applyChannelAndFeatured();
-  renderSidebarCategories();
+  renderCareer();
+  renderSidebarTypes();
+  renderSidebarStreamers();
+  renderSidebarLinks();
   renderGalleryFilters();
   renderGalleryGrid();
   renderLog();

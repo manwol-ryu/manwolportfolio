@@ -7,8 +7,16 @@
     "id": "MUbyQ7Q87ck",
     "title": "만월의 대표 편집 영상"
   },
+  "career": [
+    { "text": "스트리머 ooo님 채널 쇼츠 편집자", "period": "2025.05~" },
+    { "text": "스트리머 oo님 채널 편집자", "period": "2025.11~" },
+    { "text": "개인채널 (꼬질꼬질한 캔따개) 운영", "period": "2025.10~" }
+  ],
   "categories": [
     { "id": "candopener", "name": "꼬질꼬질한 캔따개", "emoji": "🥫" }
+  ],
+  "links": [
+    { "label": "@kojjilmung", "url": "https://www.youtube.com/@kojjilmung", "emoji": "📺" }
   ],
   "videos": [
     { "id": "WNIzEz3Xx20", "title": "끝까지 못보는 영상", "date": "2026-03-20", "type": "long", "category": "candopener" },
