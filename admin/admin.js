@@ -1,4 +1,6 @@
 const jsonPath = '../data/site.json';
+const githubJsonPath = 'data/site.json';
+const githubDefaultBranch = 'main';
 
 const TYPE_LABELS = { long: '롱폼', short: '숏폼' };
 
@@ -85,6 +87,7 @@ const state = {
   metadataTimer: null,
   metadataRequestId: 0,
   lastMetadataVideoId: '',
+  draggingCategoryIndex: null,
 };
 
 const $ = (selector) => document.querySelector(selector);
@@ -134,6 +137,53 @@ function normalizeToolItems(items) {
     enabled: item?.enabled !== false,
     level: clampLevel(item?.level),
   }));
+}
+
+function normalizeGitHubRepo(value) {
+  let repo = String(value || '').trim();
+  if (!repo) return '';
+
+  repo = repo
+    .replace(/^https?:\/\/github\.com\//i, '')
+    .replace(/^git@github\.com:/i, '')
+    .replace(/\.git$/i, '')
+    .replace(/^\/+|\/+$/g, '');
+
+  const parts = repo.split('/').filter(Boolean);
+  if (parts.length < 2) return '';
+  return `${parts[0]}/${parts[1]}`;
+}
+
+function resolveGitHubSiteJsonUrl(locationRef = window.location) {
+  const configuredRepo = normalizeGitHubRepo(state.data.site?.githubRepo);
+  if (configuredRepo) {
+    return `https://github.com/${configuredRepo}/blob/${githubDefaultBranch}/${githubJsonPath}`;
+  }
+
+  const hostname = String(locationRef.hostname || '').toLowerCase();
+  const suffix = '.github.io';
+  if (!hostname.endsWith(suffix) || hostname === suffix.slice(1)) return '';
+
+  const owner = hostname.slice(0, -suffix.length);
+  if (!owner) return '';
+
+  const pathParts = String(locationRef.pathname || '')
+    .split('/')
+    .filter(Boolean)
+    .map(part => {
+      try {
+        return decodeURIComponent(part);
+      } catch (error) {
+        return part;
+      }
+    });
+
+  const firstPath = pathParts[0] || '';
+  const repoName = !firstPath || firstPath === 'admin' || firstPath === 'index.html'
+    ? `${owner}.github.io`
+    : firstPath;
+
+  return `https://github.com/${owner}/${repoName}/blob/${githubDefaultBranch}/${githubJsonPath}`;
 }
 
 function normalizeData(input) {
@@ -575,16 +625,52 @@ function renderCategoryList() {
   list.innerHTML = state.data.categories.map((category, index) => {
     const usedCount = state.data.videos.filter(video => video.category === category.name).length;
     return `
-      <article class="category-card" data-category-index="${index}">
+      <article class="category-card" data-category-index="${index}" draggable="true">
+        <button class="category-drag-handle" type="button" draggable="true" aria-label="${escapeHTML(category.name)} 순서 드래그">↕</button>
         <label class="field">
           <span>이름</span>
           <input type="text" value="${escapeHTML(category.name)}" data-category-field="name">
         </label>
         <span class="category-count">${usedCount}개 영상</span>
+        <div class="category-order-actions" aria-label="${escapeHTML(category.name)} 순서 변경">
+          <button type="button" data-move-category="${index}" data-direction="-1" ${index === 0 ? 'disabled' : ''}>위로</button>
+          <button type="button" data-move-category="${index}" data-direction="1" ${index === state.data.categories.length - 1 ? 'disabled' : ''}>아래로</button>
+        </div>
         <button class="danger-action" type="button" data-delete-category="${index}">삭제</button>
       </article>
     `;
   }).join('');
+}
+
+function moveCategory(fromIndex, toIndex) {
+  const categories = state.data.categories;
+  if (
+    !Number.isInteger(fromIndex) ||
+    !Number.isInteger(toIndex) ||
+    fromIndex === toIndex ||
+    fromIndex < 0 ||
+    toIndex < 0 ||
+    fromIndex >= categories.length ||
+    toIndex >= categories.length
+  ) {
+    return false;
+  }
+
+  const [category] = categories.splice(fromIndex, 1);
+  categories.splice(toIndex, 0, category);
+  renderCategoryList();
+  renderCategoryOptions();
+  renderVideoList();
+  refreshJsonOutput();
+  setStatus('카테고리 순서가 변경되었습니다.', 'success');
+  return true;
+}
+
+function clearCategoryDragState() {
+  state.draggingCategoryIndex = null;
+  $$('#category-list .category-card').forEach(card => {
+    card.classList.remove('is-dragging', 'is-drag-over');
+  });
 }
 
 function renderDetails() {
@@ -780,10 +866,30 @@ async function loadJson(confirmReload = false) {
 
 async function copyAllJson() {
   const json = buildJson();
+  const githubUrl = resolveGitHubSiteJsonUrl();
+  const githubTab = githubUrl ? window.open('', '_blank') : null;
+
   try {
     await navigator.clipboard.writeText(json);
-    setStatus('전체 JSON을 클립보드에 복사했습니다.', 'success');
+    if (githubUrl) {
+      if (githubTab) {
+        githubTab.opener = null;
+        githubTab.location.href = githubUrl;
+        setStatus('JSON을 복사하고 GitHub 파일 페이지를 새 탭으로 열었습니다.', 'success');
+      } else {
+        const opened = window.open(githubUrl, '_blank', 'noopener');
+        setStatus(
+          opened
+            ? 'JSON을 복사하고 GitHub 파일 페이지를 새 탭으로 열었습니다.'
+            : 'JSON은 복사했지만 팝업 차단으로 GitHub 페이지를 열지 못했습니다.',
+          opened ? 'success' : 'error',
+        );
+      }
+    } else {
+      setStatus('JSON을 복사했습니다. 현재 주소에서는 GitHub 저장소를 자동으로 알 수 없습니다.', 'success');
+    }
   } catch (error) {
+    if (githubTab && !githubTab.closed) githubTab.close();
     const output = $('#json-output');
     output.focus();
     output.select();
@@ -1012,6 +1118,14 @@ function bindEvents() {
   });
 
   $('#category-list').addEventListener('click', (event) => {
+    const moveButton = event.target.closest('[data-move-category]');
+    if (moveButton) {
+      const index = Number(moveButton.dataset.moveCategory);
+      const direction = Number(moveButton.dataset.direction);
+      moveCategory(index, index + direction);
+      return;
+    }
+
     const deleteButton = event.target.closest('[data-delete-category]');
     if (!deleteButton) return;
     const index = Number(deleteButton.dataset.deleteCategory);
@@ -1025,6 +1139,55 @@ function bindEvents() {
     state.data.categories.splice(index, 1);
     applyDataChange('카테고리가 삭제되었습니다.');
   });
+
+  $('#category-list').addEventListener('dragstart', (event) => {
+    const card = event.target.closest('[data-category-index]');
+    if (!card || !event.target.closest('.category-drag-handle')) {
+      event.preventDefault();
+      return;
+    }
+
+    const index = Number(card.dataset.categoryIndex);
+    state.draggingCategoryIndex = index;
+    card.classList.add('is-dragging');
+    event.dataTransfer.effectAllowed = 'move';
+    event.dataTransfer.setData('text/plain', String(index));
+  });
+
+  $('#category-list').addEventListener('dragover', (event) => {
+    if (state.draggingCategoryIndex === null) return;
+    const card = event.target.closest('[data-category-index]');
+    if (!card) return;
+
+    event.preventDefault();
+    event.dataTransfer.dropEffect = 'move';
+    $$('#category-list .category-card').forEach(item => item.classList.remove('is-drag-over'));
+    card.classList.add('is-drag-over');
+  });
+
+  $('#category-list').addEventListener('dragleave', (event) => {
+    const card = event.target.closest('[data-category-index]');
+    if (!card || card.contains(event.relatedTarget)) return;
+    card.classList.remove('is-drag-over');
+  });
+
+  $('#category-list').addEventListener('drop', (event) => {
+    const card = event.target.closest('[data-category-index]');
+    if (!card) return;
+
+    event.preventDefault();
+    const rawIndex = event.dataTransfer.getData('text/plain');
+    const fromIndex = rawIndex === '' ? state.draggingCategoryIndex : Number(rawIndex);
+    if (fromIndex === null) {
+      clearCategoryDragState();
+      return;
+    }
+    const toIndex = Number(card.dataset.categoryIndex);
+    moveCategory(fromIndex, toIndex);
+    clearCategoryDragState();
+  });
+
+  $('#category-list').addEventListener('dragend', clearCategoryDragState);
 
   $('#link-list').addEventListener('input', (event) => {
     const row = event.target.closest('[data-link-index]');

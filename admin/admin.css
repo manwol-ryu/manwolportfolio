@@ -694,7 +694,52 @@ h3 {
 }
 
 .category-card {
-  grid-template-columns: minmax(0, 1fr) auto auto;
+  grid-template-columns: auto minmax(0, 1fr) auto auto auto;
+  align-items: center;
+}
+
+.category-drag-handle {
+  display: grid;
+  width: 38px;
+  min-height: 42px;
+  place-items: center;
+  padding: 0;
+  background: var(--panel-soft);
+  color: #4a90b8;
+  cursor: grab;
+}
+
+.category-drag-handle:active {
+  cursor: grabbing;
+}
+
+.category-order-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.category-order-actions button {
+  padding: 8px 10px;
+  font-size: 12px;
+}
+
+.category-order-actions button:disabled {
+  opacity: .45;
+  cursor: not-allowed;
+  transform: none;
+  border-color: var(--line);
+  background: var(--panel-soft);
+  color: var(--muted);
+}
+
+.category-card.is-dragging {
+  opacity: .55;
+}
+
+.category-card.is-drag-over {
+  border-color: var(--blue-strong);
+  background: var(--blue-soft);
 }
 
 .details-grid {
