@@ -1,0 +1,146 @@
+{
+  "site": {
+    "title": "만월의 포트폴리오",
+    "description": "유튜브 영상 편집가 만월의 포트폴리오 — 컷편집, 모션그래픽, 숏폼",
+    "logo": "🌕 만월",
+    "tag": "YOUTUBE EDITOR",
+    "sections": {
+      "types": "── 분류 ──",
+      "streamers": "── 스트리머 별 분류 ──",
+      "links": "── 개인 채널 및 링크 ──"
+    },
+    "homeLabel": "홈",
+    "costLabel": "💰 비용 안내",
+    "footer": {
+      "logo": "🌕 만월",
+      "copy": "© 2025 만월의 포트폴리오",
+      "links": [
+        { "label": "YouTube", "url": "https://www.youtube.com/@kojjilmung" }
+      ]
+    }
+  },
+  "hero": {
+    "eyebrow": "YOUTUBE EDITOR ✦",
+    "greeting": "안녕하세요 👋",
+    "titleText": "영상 편집가 만월입니다",
+    "titleAccent": "만월",
+    "sub": "유튜브 콘텐츠 전문 · 컷편집 · 모션그래픽",
+    "deco": "🌕",
+    "career": [
+      { "text": "스트리머 ooo님 채널 쇼츠 편집자", "period": "2025.05~" },
+      { "text": "스트리머 oo님 채널 편집자", "period": "2025.11~" },
+      { "text": "개인채널 (꼬질꼬질한 캔따개) 운영", "period": "2025.10~" }
+    ],
+    "tools": [
+      { "name": "Premiere Pro", "emoji": "🎬" },
+      { "name": "After Effects", "emoji": "🎞" },
+      { "name": "Photoshop", "emoji": "🖼" }
+    ],
+    "actions": [
+      { "label": "작업물 보기", "href": "#works", "style": "blue" },
+      { "label": "채널 방문", "href": "channel", "style": "mint" }
+    ]
+  },
+  "channel": {
+    "handle": "@kojjilmung",
+    "url": "https://www.youtube.com/@kojjilmung",
+    "moreWorks": {
+      "title": "더 많은 작업물",
+      "sub": "유튜브 채널에서 전체 작업물 보기 →",
+      "icon": "📺"
+    }
+  },
+  "featured": {
+    "id": "MUbyQ7Q87ck",
+    "title": "만월의 대표 편집 영상",
+    "sectionTitle": "대표 작업물",
+    "sectionDesc": "최근 업로드된 대표 편집 영상입니다"
+  },
+  "gallery": {
+    "sectionTitle": "작업물 갤러리",
+    "sectionDesc": "전체 작업물 — 타입과 카테고리로 필터링 가능",
+    "emptyText": "해당 조건의 영상이 없습니다"
+  },
+  "worklog": {
+    "sectionTitle": "작업 로그",
+    "sectionDesc": "최근 납품한 작업 타임라인 — 시간순 정렬"
+  },
+  "categories": [
+    { "name": "꼬질꼬질한 캔따개", "emoji": "🥫" }
+  ],
+  "links": [
+    { "label": "@kojjilmung", "url": "https://www.youtube.com/@kojjilmung", "emoji": "📺" }
+  ],
+  "pricing": {
+    "sectionTitle": "비용 안내",
+    "sectionDesc": "* 영상 길이 / 복잡도에 따라 협의 가능",
+    "cards": [
+      {
+        "key": "long",
+        "title": "롱폼",
+        "emoji": "🎬",
+        "items": [
+          { "label": "편집점 있을 시", "price": "분당 12,000원" },
+          { "label": "편집점 없을 시", "price": "분당 15,000원" }
+        ],
+        "cta": { "label": "문의하기", "href": "channel" }
+      },
+      {
+        "key": "short",
+        "title": "숏폼",
+        "emoji": "⚡",
+        "items": [
+          { "label": "건당", "price": "20,000원" }
+        ],
+        "cta": { "label": "문의하기", "href": "channel" }
+      }
+    ],
+    "notes": {
+      "title": "추가 안내",
+      "items": [
+        "기본 수정 횟수: 2회 (편집자의 오타 및 실수는 차감 X)",
+        "수정 횟수 추가: 회당 2,000원",
+        "영상 제작 기간: 협의 후 결정"
+      ]
+    }
+  },
+  "videos": [
+    { "id": "WNIzEz3Xx20", "title": "끝까지 못보는 영상", "date": "2026-03-20", "type": "long", "category": "꼬질꼬질한 캔따개" },
+    { "id": "DXKqoHKiJeo", "title": "시청자를 날조로 담구는 방송", "date": "2026-02-19", "type": "long", "category": "꼬질꼬질한 캔따개" },
+    { "id": "PsB3Bx_cs3w", "title": "귀엽다보다 이쁘다고 해주세요!", "date": "2026-02-13", "type": "long", "category": "꼬질꼬질한 캔따개" },
+    { "id": "1wMQK6xvyBU", "title": "우리 사랑은 하지말자", "date": "2026-01-20", "type": "long", "category": "꼬질꼬질한 캔따개" },
+    { "id": "60uZfuhIlYM", "title": "시리야, 네 주인님", "date": "2026-01-16", "type": "long", "category": "꼬질꼬질한 캔따개" },
+    { "id": "rWk-H9zR3_U", "title": "체인소 맨(?): 꼬멍편 - 꼬질꼬질한 악마", "date": "2026-01-13", "type": "long", "category": "꼬질꼬질한 캔따개" },
+    { "id": "gMYfCzoBVQA", "title": "치지직으로 이직하면 먹여 살려주세요", "date": "2026-01-09", "type": "long", "category": "꼬질꼬질한 캔따개" },
+    { "id": "E902jcUi0dk", "title": "누군가의 딸내미: 딸 키우기 힘들어요...", "date": "2025-12-18", "type": "long", "category": "꼬질꼬질한 캔따개" },
+    { "id": "oo74vAftY-c", "title": "선생님 다음엔 더 잘그려줄깨", "date": "2025-12-15", "type": "long", "category": "꼬질꼬질한 캔따개" },
+    { "id": "RoY-A4hWfIs", "title": "매도와 분내가 같이 나는 방송", "date": "2025-12-10", "type": "long", "category": "꼬질꼬질한 캔따개" },
+    { "id": "gC-g1Ixtp1M", "title": "오늘 현타온 횟수는? 끼~앗~~ 호~우~~", "date": "2025-12-09", "type": "long", "category": "꼬질꼬질한 캔따개" },
+    { "id": "oOJPtaFlcTM", "title": "야랄난 애교 - 방과후 운동장 [꼬질꼬질한 게임영상]", "date": "2025-12-07", "type": "long", "category": "꼬질꼬질한 캔따개" },
+    { "id": "oPdIUvgngNc", "title": "희생자 구해요 [꼬질꼬질한 프사데이]", "date": "2025-11-25", "type": "long", "category": "꼬질꼬질한 캔따개" },
+
+    { "id": "MFYdrR2dej0", "title": "허우적 허우적 #김꼬멍 #버튜버 #vtuber", "date": "2026-03-22", "type": "short", "category": "꼬질꼬질한 캔따개" },
+    { "id": "T3yBnGf_5Os", "title": "안녕하세요 치지직스트리머 김키위피자님", "date": "2026-02-20", "type": "short", "category": "꼬질꼬질한 캔따개" },
+    { "id": "I_78Z5Htcgo", "title": "정치드립은 마짱 까자", "date": "2026-01-09", "type": "short", "category": "꼬질꼬질한 캔따개" },
+    { "id": "6cYSVT4T6tA", "title": "띠바띠바는 좀...", "date": "2026-01-05", "type": "short", "category": "꼬질꼬질한 캔따개" },
+    { "id": "Abps28VLnig", "title": "프로(?)유튜버 김꼬멍", "date": "2026-01-05", "type": "short", "category": "꼬질꼬질한 캔따개" },
+    { "id": "pZSkOFHxCOY", "title": "그렉이 아니라 크랙인데?", "date": "2026-01-03", "type": "short", "category": "꼬질꼬질한 캔따개" },
+    { "id": "faJ_csm58Go", "title": "못봤으니깐 무효야!", "date": "2026-01-02", "type": "short", "category": "꼬질꼬질한 캔따개" },
+    { "id": "Hn2WpEDFILY", "title": "잡아줘요 (- n -)", "date": "2025-12-31", "type": "short", "category": "꼬질꼬질한 캔따개" },
+    { "id": "N6Kc1X7uHYA", "title": "같은 시간을 함께할 수 있는 사람", "date": "2025-12-19", "type": "short", "category": "꼬질꼬질한 캔따개" },
+    { "id": "_vYaZksdf9c", "title": "치사해서 안해 #shorts", "date": "2025-12-16", "type": "short", "category": "꼬질꼬질한 캔따개" },
+    { "id": "PIvYsv-Qy1A", "title": "매도해주세요! #shorts #vtuber", "date": "2025-12-11", "type": "short", "category": "꼬질꼬질한 캔따개" },
+    { "id": "iT_509BtuOI", "title": "치카치카 コンココンコンココンコンコン #meme #shorts", "date": "2025-12-10", "type": "short", "category": "꼬질꼬질한 캔따개" },
+    { "id": "HtKoFilv254", "title": "야랄난 애교 #shorts #vtuber", "date": "2025-12-08", "type": "short", "category": "꼬질꼬질한 캔따개" },
+    { "id": "6B1BRaJi8XE", "title": "Les Champs Élysées 오 샹젤리제 #meme #shorts", "date": "2025-12-05", "type": "short", "category": "꼬질꼬질한 캔따개" },
+    { "id": "qp2VDgOGjqw", "title": "니네 추억 개쩔더라?? [꼬질꼬질한 게임영상] #shorts #vtuber", "date": "2025-12-03", "type": "short", "category": "꼬질꼬질한 캔따개" },
+    { "id": "Ut5BgggYOMk", "title": "그만 넘어트려 [꼬질꼬질한 토크] #shorts #vtuber", "date": "2025-12-02", "type": "short", "category": "꼬질꼬질한 캔따개" },
+    { "id": "64erEcaz1js", "title": "잠오는 김꼬멍 [꼬질꼬질한 토크] #shorts #vtuber", "date": "2025-12-01", "type": "short", "category": "꼬질꼬질한 캔따개" },
+    { "id": "PaYvpACv0Cs", "title": "누구세요? 적응해 [꼬질꼬질한 토크] #shorts #vtuber", "date": "2025-12-01", "type": "short", "category": "꼬질꼬질한 캔따개" },
+    { "id": "kGmjLzr9rcE", "title": "너도 돼지 [꼬질꼬질한 토크] #shorts #vtuber", "date": "2025-11-29", "type": "short", "category": "꼬질꼬질한 캔따개" },
+    { "id": "riFQfMFWda8", "title": "신기한 동물사전 [꼬질꼬질한 게임영상] #shorts #vtuber", "date": "2025-11-29", "type": "short", "category": "꼬질꼬질한 캔따개" },
+    { "id": "TWu0H5oquHw", "title": "으에에엥 [꼬질꼬질한 카페탐방] #shorts #vtuber", "date": "2025-11-28", "type": "short", "category": "꼬질꼬질한 캔따개" },
+    { "id": "IOjQracmZIg", "title": "전 작지않아요! [꼬질꼬질한 프사데이] #shorts #vtuber", "date": "2025-11-27", "type": "short", "category": "꼬질꼬질한 캔따개" },
+    { "id": "pf9QHvBDdk0", "title": "노상방뇨 아저씨 [꼬질꼬질한 프사데이] #shorts #vtuber", "date": "2025-11-26", "type": "short", "category": "꼬질꼬질한 캔따개" }
+  ]
+}
