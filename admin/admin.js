@@ -154,12 +154,7 @@ function normalizeGitHubRepo(value) {
   return `${parts[0]}/${parts[1]}`;
 }
 
-function resolveGitHubSiteJsonUrl(locationRef = window.location) {
-  const configuredRepo = normalizeGitHubRepo(state.data.site?.githubRepo);
-  if (configuredRepo) {
-    return `https://github.com/${configuredRepo}/blob/${githubDefaultBranch}/${githubJsonPath}`;
-  }
-
+function resolveGitHubRepoFromPagesLocation(locationRef = window.location) {
   const hostname = String(locationRef.hostname || '').toLowerCase();
   const suffix = '.github.io';
   if (!hostname.endsWith(suffix) || hostname === suffix.slice(1)) return '';
@@ -183,7 +178,19 @@ function resolveGitHubSiteJsonUrl(locationRef = window.location) {
     ? `${owner}.github.io`
     : firstPath;
 
-  return `https://github.com/${owner}/${repoName}/blob/${githubDefaultBranch}/${githubJsonPath}`;
+  return `${owner}/${repoName}`;
+}
+
+function buildGitHubSiteJsonUrl(repo) {
+  const normalizedRepo = normalizeGitHubRepo(repo);
+  return normalizedRepo
+    ? `https://github.com/${normalizedRepo}/blob/${githubDefaultBranch}/${githubJsonPath}`
+    : '';
+}
+
+function resolveGitHubSiteJsonUrl(locationRef = window.location) {
+  const repoFromPages = resolveGitHubRepoFromPagesLocation(locationRef);
+  return repoFromPages ? buildGitHubSiteJsonUrl(repoFromPages) : '';
 }
 
 function normalizeData(input) {
@@ -886,7 +893,7 @@ async function copyAllJson() {
         );
       }
     } else {
-      setStatus('JSON을 복사했습니다. 현재 주소에서는 GitHub 저장소를 자동으로 알 수 없습니다.', 'success');
+      setStatus('JSON을 복사했습니다. GitHub 이동은 GitHub Pages 배포 주소에서만 동작합니다.', 'success');
     }
   } catch (error) {
     if (githubTab && !githubTab.closed) githubTab.close();
@@ -894,6 +901,24 @@ async function copyAllJson() {
     output.focus();
     output.select();
     setStatus('클립보드 복사가 막혔습니다. JSON 탭에서 직접 선택해 복사하세요.', 'error');
+  }
+}
+
+function downloadJsonFile() {
+  try {
+    const blob = new Blob([buildJson()], { type: 'application/json;charset=utf-8' });
+    const downloadUrl = URL.createObjectURL(blob);
+    const anchor = document.createElement('a');
+    anchor.href = downloadUrl;
+    anchor.download = 'site.json';
+    anchor.style.display = 'none';
+    document.body.appendChild(anchor);
+    anchor.click();
+    anchor.remove();
+    window.setTimeout(() => URL.revokeObjectURL(downloadUrl), 1000);
+    setStatus('site.json 파일을 다운로드했습니다.', 'success');
+  } catch (error) {
+    setStatus(`다운로드 실패: ${error.message}`, 'error');
   }
 }
 
@@ -1027,6 +1052,7 @@ function bindEvents() {
   $('#validate-json').addEventListener('click', validateJson);
   $('#copy-all-json').addEventListener('click', copyAllJson);
   $('#copy-json-panel').addEventListener('click', copyAllJson);
+  $('#download-json-file').addEventListener('click', downloadJsonFile);
   $('#floating-actions-toggle').addEventListener('click', () => {
     setFloatingActionsOpen(!$('.floating-actions').classList.contains('is-open'));
   });

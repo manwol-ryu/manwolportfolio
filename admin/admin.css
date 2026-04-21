@@ -343,7 +343,7 @@ h3 {
 }
 
 .floating-actions.is-open .floating-extra-actions {
-  max-width: 430px;
+  max-width: 620px;
   background: #ffffff;
   opacity: 1;
   pointer-events: auto;
