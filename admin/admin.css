@@ -18,7 +18,7 @@
   --radius: 8px;
   --shadow: 0 12px 30px rgba(42, 58, 74, .07);
   --font-body: 'Inter', 'Noto Sans KR', sans-serif;
-  --font-accent: 'Caveat', cursive;
+  --font-accent: 'Noto Sans KR', 'Inter', sans-serif;
 }
 
 * {
